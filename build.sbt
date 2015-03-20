@@ -2,7 +2,7 @@ import java.lang.Boolean.{ parseBoolean => bool }
 
 organization := "me.lessis"
 
-version := "0.1.3"
+version := "0.1.4"
 
 name := "semverfi"
 
@@ -10,17 +10,29 @@ description := "Always Faithful, always loyal semantic versions"
 
 homepage := Some(url("https://github.com/softprops/semverfi"))
 
-crossScalaVersions := Seq("2.9.1-1", "2.9.2",
-                          "2.10.0", "2.10.1")
+crossScalaVersions := Seq("2.11.6", "2.10.5")
+
+scalaVersion := "2.11.6"
+
+resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
 scalacOptions += "-deprecation"
 
-libraryDependencies <+= scalaVersion( v =>
-  (v.split("[.-]").toList match {
-    case "2" :: "9" :: _ => "org.scala-tools.testing" % "specs_2.9.1" % "1.6.9"
-    case _ => "org.scala-tools.testing" %% "specs" % "1.6.9"
-  }) % "test"
-)
+libraryDependencies := {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+      libraryDependencies.value ++ Seq(
+        "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
+        "org.specs2" % "specs2_2.11" % "2.4.17"
+      )
+    case _ =>
+      // or just libraryDependencies.value if you don't depend on scala-swing
+      libraryDependencies.value ++ Seq( 
+        "org.scala-lang" % "scala-swing" % scalaVersion.value,
+        "org.specs2" %% "specs2" % "2.4.17"
+      )
+  }
+}
 
 publishMavenStyle := true
 

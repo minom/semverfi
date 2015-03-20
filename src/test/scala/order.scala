@@ -1,6 +1,6 @@
 package semverfi
 
-import org.specs._
+import org.specs2.mutable._
 import scala.util.Random.shuffle
 
 object OrderSpec extends Specification {
